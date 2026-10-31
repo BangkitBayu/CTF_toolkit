@@ -46,8 +46,9 @@ new_parser = subparsers.add_parser(
     help="Create a new challenge folder"
 )
 
-new_parser.add_argument("category")
-new_parser.add_argument("name")
+new_parser.add_argument("source" , help="Challenge source (PicoCTF, Hackthebox, Tryhackme, etc.)")
+new_parser.add_argument("category", help="Category challenge")
+new_parser.add_argument("name", help="Challenge name")
 
 new_parser.add_argument(
     "--usb",
@@ -65,9 +66,10 @@ copy_parser = subparsers.add_parser(
     help="Copy challenge file into workspace"
 )
 
-copy_parser.add_argument("source")
-copy_parser.add_argument("category")
-copy_parser.add_argument("name")
+copy_parser.add_argument("file", help="Path to the source file")
+copy_parser.add_argument("source",  help="Challenge source (PicoCTF, Hackthebox, Tryhackme, etc.)")
+copy_parser.add_argument("category", help="Category challenge")
+copy_parser.add_argument("name",  help="Challenge name")
 
 copy_parser.add_argument(
     "--usb",
@@ -100,10 +102,10 @@ else:
 # CREATE CHALLENGE FOLDER
 # ==========================================
 
-def create_challenge_dir(category, name, storage):
+def create_challenge_dir(source,category, name, storage):
 
     # Susun direktori berdasarkan kategori dan nama challenge.
-    chall_dir = storage / category / name
+    chall_dir = storage/ source / category / name
 
     # Buat folder beserta parent directory.
     chall_dir.mkdir(parents=True, exist_ok=True)
@@ -116,24 +118,24 @@ def create_challenge_dir(category, name, storage):
 # COPY CHALLENGE FILE
 # ==========================================
 
-def copy_challenge(source, category, name, storage):
+def copy_challenge(file,source, category, name, storage):
 
     # Ubah lokasi file sumber menjadi objek Path.
-    source = Path(source).expanduser()
+    file_path = Path(file).expanduser()
 
     # Periksa apakah file sumber tersedia.
-    if not source.is_file():
-        print("[-] Source file not found!")
+    if not file_path.is_file():
+        print("[-] File not found!")
         return
 
     # Tentukan folder tujuan.
-    chall_dir = storage / category / name
+    chall_dir = storage/source / category / name
 
     # Buat folder tujuan jika belum tersedia.
     chall_dir.mkdir(parents=True, exist_ok=True)
 
     # Tentukan nama dan lokasi file tujuan.
-    destination = chall_dir / source.name
+    destination = chall_dir / file_path.name
 
     # Hindari menimpa file yang sudah ada.
     if destination.exists():
@@ -141,10 +143,10 @@ def copy_challenge(source, category, name, storage):
         return
 
     # Salin file beserta metadata dasarnya.
-    shutil.copy2(source, destination)
+    shutil.copy2(file_path, destination)
 
     print("[+] File copied successfully!")
-    print(f"[+] Source      : {source}")
+    print(f"[+] Source      : {file_path}")
     print(f"[+] Destination : {destination}")
 
 
@@ -156,6 +158,7 @@ match args.command:
 
     case "new":
         create_challenge_dir(
+			args.source,
             args.category,
             args.name,
             storage
@@ -163,6 +166,7 @@ match args.command:
 
     case "copy":
         copy_challenge(
+			args.file,
             args.source,
             args.category,
             args.name,
