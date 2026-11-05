@@ -2,35 +2,20 @@ from pwn import *
 import argparse
 import os
 
-# ===================================
-# Configuration
-# ===================================
-
-BINARY = "./chall"
-
-HOST = "127.0.0.1"
-PORT = 80
-
-context.binary = ELF(BINARY)
-context.arch = context.binary.arch
-context.log_level = "info"
-
-elf = context.binary
-
 # ==========================================
 # CONFIGURATION
 # ==========================================
 
-BINARY = "./chall"
+# File executable target
 
 HOST = "127.0.0.1"
 PORT = 1337
 
-context.binary = ELF(BINARY, checksec=False)
-context.arch = context.binary.arch
+exe = "./chall" 
+elf = ELF(exe)
+context.binary = elf
+context.arch = elf.arch
 context.log_level = "info"
-
-elf = context.binary
 
 # ==========================================
 # ARGUMENT PARSER
@@ -72,10 +57,15 @@ def start():
 # ==========================================
 
 def exploit(io):
-
-   #Exploit step
-
-    pass
+    
+    """
+    Function to run exploitation
+    
+    Writing your exploitation logic steps in here
+    
+    Parameter:
+    io: connection
+    """
 
 
 # ==========================================
@@ -87,7 +77,7 @@ def main():
     io = start()
 
     exploit(io)
-
+    
     io.interactive()
 
 
